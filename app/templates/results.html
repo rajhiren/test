@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <body>
+        <h1>Results</h1>
+        {% if observation == '' %}
+            <p>No observation recorded yet</p>
+        {% else %}
+            {% for observation in observations %}
+            <div>
+                <p>
+                    ID : {{ observation.id }}
+                    Survey_ID: <b>  {{ observation.survey_id }} </b>
+                    Value: <b>  {{ observation.value }} </b>
+                    Frequency: <b>  {{ observation.frequency }} </b>
+                </p>
+            </div>
+            {% endfor %}
+        {% endif %}
+    </body>
+{% endblock %}
