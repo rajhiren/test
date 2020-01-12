@@ -12,9 +12,6 @@ class Survey(db.Model, FlaskSerializeMixin):
     # serializer fields
     create_fields = update_fields = ['name']
 
-    # @property
-    # def name(self):
-    #     return self.name
     # check if flask-serialize can delete
     def can_delete(self):
         if self.name == 'Hiren Raj':
@@ -26,7 +23,8 @@ class Survey(db.Model, FlaskSerializeMixin):
             raise Exception('Missing Name')
 
     def __repr__(self):
-        return '<name {}>'.format(self.name)
+        return '<name : {}, id : {}>'.format(self.name, self.id)
+        # return dict(name=self.name, id=self.id)
 
 
 class Observation(db.Model, FlaskSerializeMixin):
@@ -38,5 +36,18 @@ class Observation(db.Model, FlaskSerializeMixin):
     # serializer fields
     create_fields = update_fields = ['survey_id', 'value', 'frequency']
 
+    # checks if Flask-Serialize can create/update
+    def verify(self, create=False):
+        if not self.value or len(self.value) < 1:
+            raise Exception('Invalid value')
+        elif not self.frequency or len(self.frequency) < 1:
+            raise Exception('Invalid Frequency')
+        elif not self.survey_id or len(self.survey_id) < 1:
+            raise Exception('Invalid Survey_id')
+        # elif self.survey_id not in Survey.query.filter_by(id=self.survey_id).all():
+        #     raise Exception(Survey.dict_list(Survey.query.filter_by(id=self.survey_id).all()))
+        # elif isinstance(self.survey_id, int):
+        #     raise Exception('Survey ID not integer')
+
     def __repr__(self):
-        return '<Value {}>'.format(self.value)
+        return '<Setting %r %r %r>' % (self.survey_id, self.value, self.frequency)
