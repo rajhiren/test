@@ -26,6 +26,14 @@ class Survey(db.Model, FlaskSerializeMixin):
         return '<name : {}, id : {}>'.format(self.name, self.id)
         # return dict(name=self.name, id=self.id)
 
+    @property
+    def jsonify(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'observations': [observation.jsonify for observation in self.observations]
+        }
+
 
 class Observation(db.Model, FlaskSerializeMixin):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -36,14 +44,16 @@ class Observation(db.Model, FlaskSerializeMixin):
     # serializer fields
     create_fields = update_fields = ['survey_id', 'value', 'frequency']
 
+    # relationship_fields = ['survey_id']
+
     # checks if Flask-Serialize can create/update
     def verify(self, create=False):
         if not self.value or len(self.value) < 1:
             raise Exception('Invalid value')
         elif not self.frequency or len(self.frequency) < 1:
             raise Exception('Invalid Frequency')
-        elif not self.survey_id or len(self.survey_id) < 1:
-            raise Exception('Invalid Survey_id')
+        # elif not self.survey_id or len(self.survey_id) < 1:
+        #     raise Exception('Invalid Survey_id')
         # elif self.survey_id not in Survey.query.filter_by(id=self.survey_id).all():
         #     raise Exception(Survey.dict_list(Survey.query.filter_by(id=self.survey_id).all()))
         # elif isinstance(self.survey_id, int):

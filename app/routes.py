@@ -1,6 +1,6 @@
 from flask import render_template, request
 from app import app
-from app.models import Survey, Observation, db
+from app.models import Survey, Observation
 
 
 @app.route('/')
@@ -29,17 +29,16 @@ def survey(survey_id=None):
     return Survey.get_delete_put_post(survey_id)
 
 
-# @app.route('/stat/<int:observation_id>', methods=['GET', 'PUT'])
-# def obs(observation_id=None):
-#     return Observation.get_delete_put_post(observation_id)
-
-
-@app.route('/stat/<int:survey_id>', methods=['GET', 'PUT', 'POST'])
-def stat(survey_id=None):
+@app.route('/stat/<int:id>', methods=['GET', 'PUT', 'POST', 'DELETE'])
+def stat(id=None):
+    # when we add observation for survey using form-post only
     if request.form:
-        # raise Exception(survey_id)
-        observation = Observation(survey_id=survey_id, value=request.form.get('value'), frequency=request.form.get('frequency') )
-        db.session.add(observation)
-        db.session.commit()
-    return 'Observation Added', 200
-    # return Observation.get_delete_put_post(survey_id)
+        if Observation.request_create_form(survey_id=id, value=request.form.get('value'),
+                                           frequency=request.form.get('frequency')):
+            return "Observation Added for Survey : {}".format(id)
+        else:
+            return "Operation not permitted"
+    elif request.args:
+        return Observation.get_delete_put_post(id)
+    else:
+        return Observation.get_delete_put_post(id)
