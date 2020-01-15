@@ -1,4 +1,5 @@
 from app.models import Survey, Observation
+import pytest
 
 
 def test_new_survey():
@@ -15,4 +16,22 @@ def test_new_observation():
 
 def test_survey_can_delete():
     survey = Survey(name='Hiren Raj')
-    assert survey.can_delete() == 'Exception: Deletion not allowed. Magic value!'
+    with pytest.raises(Exception):
+        survey.can_delete()
+
+
+def test_survey_verify():
+    survey = Survey(name='')
+    with pytest.raises(Exception):
+        survey.verify(survey)
+
+
+def test_survey_repr():
+    survey = repr(Survey(name='Test'))
+    assert survey == '<name : Test>'
+
+
+
+def test_obs_verify():
+    obs = repr(Observation(survey_id=1, value=1.1, frequency=10))
+    assert obs == '<Observation 1 1.1 10>'
